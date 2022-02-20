@@ -44,4 +44,18 @@ class AtomicTests: XCTestCase {
 
         expect(result) == 20
     }
+
+    func testModifyCanBeReEntrant() {
+        func add(_ atomic: Atomic<Int>, _ number: Int) {
+            atomic.modify { $0 += number }
+        }
+
+        let atomic = Atomic(10)
+        atomic.modify { _ in
+            add(atomic, 10)
+        }
+
+        expect(atomic.value) == 20
+    }
+
 }
